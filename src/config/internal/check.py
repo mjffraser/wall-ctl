@@ -43,10 +43,12 @@ def read_config(home_dir: str) -> ConfigSpecs:
         raise KeyError("Cannot find \"config\" header in config file.")
     manager_name       = read_mandatory_field("config", "manager_name", data) 
     path               = read_mandatory_field("config", "path", data)
-    generic_folder     = data["config"].get("generic_folder", None)
+    generic_folder     = data["config"].get("generic_folder",  None)
+    freq               = data["config"].get("freq",            None)
+    preload_buffer     = data["config"].get("preload_buffer",  None)
     refresh_seconds    = data["config"].get("refresh_seconds", None)
     refresh_minutes    = data["config"].get("refresh_minutes", None)
-    refresh_hours      = data["config"].get("refresh_hours", None)
+    refresh_hours      = data["config"].get("refresh_hours",   None)
 
     #displays header
     if "displays" not in data:
@@ -59,23 +61,25 @@ def read_config(home_dir: str) -> ConfigSpecs:
     season_start_dates = None
     season_end_dates   = None
     if "seasons" in data:
-        season_names       = data["seasons"].get("season_names", None)
+        season_names       = data["seasons"].get("season_names",       None)
         season_start_dates = data["seasons"].get("season_start_dates", None)
-        season_end_dates   = data["seasons"].get("season_end_dates", None)
+        season_end_dates   = data["seasons"].get("season_end_dates",   None)
 
     #hourly header
     hourly_names       = None
     hourly_start_times = None
     hourly_end_times   = None
     if "hourly" in data:
-        hourly_names       = data["hourly"].get("hourly_names", None)
+        hourly_names       = data["hourly"].get("hourly_names",       None)
         hourly_start_times = data["hourly"].get("hourly_start_times", None)
-        hourly_end_times   = data["hourly"].get("hourly_end_times", None)
+        hourly_end_times   = data["hourly"].get("hourly_end_times",   None)
 
     return ConfigSpecs(
         manager_name,
         path,
         generic_folder,
+        freq,
+        preload_buffer,
         refresh_seconds,
         refresh_minutes,
         refresh_hours,

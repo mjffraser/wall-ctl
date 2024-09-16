@@ -1,7 +1,7 @@
 from typing import List, Tuple, Optional
 
 class ConfigSpecs:
-    _initialized        = False
+    initialized        = False
 
     ################################################################################
     #config section
@@ -11,6 +11,8 @@ class ConfigSpecs:
 
     #optional
     _generic_folder     = None
+    _freq               = None
+    _preload_buffer     = None
     _refresh_seconds    = None
     _refresh_minutes    = None
     _refresh_hours      = None
@@ -51,6 +53,8 @@ class ConfigSpecs:
                  manager_name, 
                  path, 
                  generic_folder,
+                 freq,
+                 preload_buffer,
                  refresh_seconds,
                  refresh_minutes,
                  refresh_hours,
@@ -93,6 +97,8 @@ class ConfigSpecs:
         #optional
         #checks occur in getters
         self._generic_folder     = generic_folder
+        self._freq               = freq
+        self._preload_buffer     = preload_buffer
         self._refresh_seconds    = refresh_seconds
         self._refresh_minutes    = refresh_minutes
         self._refresh_hours      = refresh_hours
@@ -102,27 +108,20 @@ class ConfigSpecs:
         self._hourly_names       = hourly_names
         self._hourly_start_times = hourly_start_times
         self._hourly_end_times   = hourly_end_times
-        self._initialized        = True
 
-    def _ret_field(self, field):
-        if self._initialized is True:
-            return field
-        else:
-            return None
-            
     #required, so never None if initialized properly
     def get_name(self) -> str:
-        name = self._ret_field(self._manager_name)
+        name = self._manager_name
         assert type(name) is str
         return name
 
     def get_path(self) -> str:
-        path = self._ret_field(self._path)
+        path = self._path
         assert type(path) is str
         return path.removesuffix("/") #trim trailing slash if needed
 
     def get_display_names(self) -> List[List[str]]:
-        display_names = self._ret_field(self._display_names)
+        display_names = self._display_names
         assert type(display_names) is list
         return display_names
 
@@ -135,8 +134,32 @@ class ConfigSpecs:
         else:
             return False
 
-    #returns refresh in seconds
+    #returns freq in seconds
+    #this is how often the loop should check for group changes, and or if a wallpaper refresh should happen
+    #in other words, this is the amount of time the loop sleeps for
     #DEFAULT = 10 minutes
+    def get_check_freq(self) -> int:
+        if self._freq is not None:
+            return self._freq
+        else:
+            return 600
+
+    #returns amount of time in seconds that the next group of wallpapers should be preloaded before actually loading in
+    #DEFAULT = 30 seconds
+    def get_preload_buffer(self) -> int:
+        refresh = self.get_refresh()
+        if self._preload_buffer is not None:
+            if self._preload_buffer < refresh:
+                return self._preload_buffer
+        
+        if refresh > 30:
+            return 30
+        else:
+            return 1
+
+    #returns refresh in seconds
+    #this is how often wallpapers should swap, not how often checks to swap happen
+    #DEFAULT = 1 hour
     def get_refresh(self) -> int:
         if self._refresh_seconds is not None:
             return self._refresh_seconds
@@ -145,7 +168,7 @@ class ConfigSpecs:
         elif self._refresh_hours is not None:
             return self._refresh_hours * 60 * 60
         else:
-            return 600 
+            return 3600 
 
     #DEFAULT = None
     def get_group_names(self) -> Optional[List[str]]:
