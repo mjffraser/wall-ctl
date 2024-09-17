@@ -28,6 +28,7 @@ def main_loop(specs: ConfigSpecs):
 
         elif time == preload_time:
             selected = randomly_select_wallpapers(specs, current_groups) 
+            print(selected)
             preload_wallpapers(specs, selected)
 
         elif time == refresh_time:

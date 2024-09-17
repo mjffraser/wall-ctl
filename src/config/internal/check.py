@@ -41,14 +41,16 @@ def read_config(home_dir: str) -> ConfigSpecs:
     #config header
     if "config" not in data:
         raise KeyError("Cannot find \"config\" header in config file.")
-    manager_name       = read_mandatory_field("config", "manager_name", data) 
-    path               = read_mandatory_field("config", "path", data)
-    generic_folder     = data["config"].get("generic_folder",  None)
-    freq               = data["config"].get("freq",            None)
-    preload_buffer     = data["config"].get("preload_buffer",  None)
-    refresh_seconds    = data["config"].get("refresh_seconds", None)
-    refresh_minutes    = data["config"].get("refresh_minutes", None)
-    refresh_hours      = data["config"].get("refresh_hours",   None)
+    manager_name                  = read_mandatory_field("config", "manager_name", data)
+    path                          = read_mandatory_field("config", "path", data)
+    generic_folder                = data["config"].get("generic_folder",                None)
+    freq                          = data["config"].get("freq",                          None)
+    preload_buffer                = data["config"].get("preload_buffer",                None)
+    refresh_seconds               = data["config"].get("refresh_seconds",               None)
+    refresh_minutes               = data["config"].get("refresh_minutes",               None)
+    refresh_hours                 = data["config"].get("refresh_hours",                 None)
+    dgroup_force_same_choice      = data["config"].get("dgroup_force_same_choice",      None)
+    dgroup_force_different_choice = data["config"].get("dgroup_force_different_choice", None)
 
     #displays header
     if "displays" not in data:
@@ -83,6 +85,8 @@ def read_config(home_dir: str) -> ConfigSpecs:
         refresh_seconds,
         refresh_minutes,
         refresh_hours,
+        dgroup_force_same_choice,
+        dgroup_force_different_choice,
         display_names,
         group_names,
         season_names,
