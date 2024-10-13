@@ -1,10 +1,14 @@
 import sys
+import setproctitle
 
 from config.read_config import get_config
 from checks.checks      import run_checks
 from loop.loop          import main_loop
 
 def main():
+    setproctitle.setproctitle("wallctl-manager") 
+
+
     args = len(sys.argv)
     debug = False
     if args > 1:

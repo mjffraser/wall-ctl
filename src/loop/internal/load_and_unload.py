@@ -1,6 +1,7 @@
 from configSpecs import ConfigSpecs
 from typing import List, Tuple
 import subprocess
+import os
 
 #supported manager imports
 from loop.internal.managers.hyprpaper import start_hyprpaper, unload_wallpapers_hyprpaper, preload_wallpaper_hyprpaper, load_wallpaper_hyprpaper
@@ -24,6 +25,13 @@ def _preload_wallpaper(specs: ConfigSpecs, path: str):
         preload_wallpaper_hyprpaper(path) 
 
 def _load_wallpaper(specs: ConfigSpecs, path: str, display_name: str):
+    wallpapers_dir = os.path.expanduser('~/wallpapers')
+    symlink = os.path.join(wallpapers_dir, "wplink")
+
+    if os.path.islink(symlink):
+        os.unlink(symlink)
+    os.symlink(path, symlink)
+
     if specs.get_name() == "hyprpaper":
         load_wallpaper_hyprpaper(path, display_name) 
     
