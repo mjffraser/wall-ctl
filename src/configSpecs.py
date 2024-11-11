@@ -1,7 +1,7 @@
 from typing import List, Tuple, Optional
 
 class ConfigSpecs:
-    initialized        = False
+    initialized        = False #not imported but rather denotes if we've checked for wallpaper manager.
 
     ################################################################################
     #config section
@@ -13,10 +13,15 @@ class ConfigSpecs:
     _generic_folder     = None
     _freq               = None
     _preload_buffer     = None
+    
+    #for refresh_* only use one of the three in your config. If you use more than one the priority is seconds > minutes > hours
     _refresh_seconds    = None
     _refresh_minutes    = None
     _refresh_hours      = None
-    #for refresh_* only use one of the three in your config. If you use more than one the priority is seconds > minutes > hours
+    
+    _never_same_img     = None #try to find a wallpaper with a different name from the currently selected one
+    _create_symlink     = None #create a symlink to current wallpaper
+    _symlink_path       = None #path to where to create symlink
 
     '''
     If dgroup_force_different_choice (dg_diff) is set True, dgroup_force_same_choice (dg_same) is set False irregardless of the config
@@ -67,6 +72,9 @@ class ConfigSpecs:
                  refresh_seconds,
                  refresh_minutes,
                  refresh_hours,
+                 never_same_img,
+                 create_symlink,
+                 symlink_path,
                  dgroup_force_same_choice,
                  dgroup_force_different_choice,
                  display_names, 
@@ -111,6 +119,9 @@ class ConfigSpecs:
         self._refresh_seconds               = refresh_seconds
         self._refresh_minutes               = refresh_minutes
         self._refresh_hours                 = refresh_hours
+        self._never_same_img                = never_same_img
+        self._create_symlink                = create_symlink
+        self._symlink_path                  = symlink_path
         self._dgroup_force_same_choice      = dgroup_force_same_choice
         self._dgroup_force_different_choice = dgroup_force_different_choice
         self._season_names                  = season_names
@@ -139,13 +150,19 @@ class ConfigSpecs:
     '''
     optional getters
     these return defaults if nothing was set
-    DEFAULT = False
+
+    returns bool flag to tell whether or not to use a generic folder for season and hourly groups.
+    in other words, if this is set, there will be a /generic/ dir alongside season and hourly directories.
+    anything in this generic directory is always included in the img search regardless of current season/time of day.
+    if set FALSE images can instead be dropped into the directories for various group/season/time groups.
+    this is ONLY a grouping method that make the directory tree cleaner.
+    DEFAULT = True
     '''
     def get_generic_folder(self) -> bool:
-        if self._generic_folder is True:
-            return True
-        else:
+        if self._generic_folder is False:
             return False
+        else:
+            return True
 
     '''
     returns freq in seconds
@@ -188,6 +205,28 @@ class ConfigSpecs:
             return self._refresh_hours * 60 * 60
         else:
             return 3600 
+
+    '''
+    returns bool _never_same_img
+    DEFAULT = True
+    '''
+    def get_search_for_diff_img(self) -> bool:
+        if self._never_same_img is False:
+            return False
+        else:
+            return True
+
+    '''
+    returns path to where to create symlink at, if create_symlink is set True in the config 
+    note that _create_symlink is FALSE by default, so unless that's set, this won't return anything
+    DEFAULT = _path 
+    '''
+    def get_symlink(self) -> Optional[str]:
+        if self._create_symlink is True:
+            if type(self._symlink_path) is str:
+                return self._symlink_path
+            else:
+                return self.get_path() 
 
     '''
     returns id code to determine selection behavior, with the first code indicating behavior between separate groups, and the second for within a group

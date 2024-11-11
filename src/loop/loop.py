@@ -10,9 +10,7 @@ def main_loop(specs: ConfigSpecs):
     refresh_time = specs.get_refresh()
     preload_time = refresh_time - specs.get_preload_buffer()
 
-    print(time)
-    
-    #this doesn't really make sense to do and can cause some weird timing 
+    #having preload time longer than freq doesn't really make sense to do and can cause some weird timing 
     if preload_time > specs.get_check_freq():
         preload_time = refresh_time - specs.get_check_freq() 
 

@@ -49,6 +49,9 @@ def read_config(home_dir: str) -> ConfigSpecs:
     refresh_seconds               = data["config"].get("refresh_seconds",               None)
     refresh_minutes               = data["config"].get("refresh_minutes",               None)
     refresh_hours                 = data["config"].get("refresh_hours",                 None)
+    never_same_img                = data["config"].get("never_same_img",                None)
+    create_symlink                = data["config"].get("create_symlink", None)
+    symlink_path                  = data["config"].get("symlink_path", None)
     dgroup_force_same_choice      = data["config"].get("dgroup_force_same_choice",      None)
     dgroup_force_different_choice = data["config"].get("dgroup_force_different_choice", None)
 
@@ -85,6 +88,9 @@ def read_config(home_dir: str) -> ConfigSpecs:
         refresh_seconds,
         refresh_minutes,
         refresh_hours,
+        never_same_img,
+        create_symlink,
+        symlink_path,
         dgroup_force_same_choice,
         dgroup_force_different_choice,
         display_names,
