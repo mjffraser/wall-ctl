@@ -5,13 +5,18 @@ from datetime           import datetime, timedelta
 def _between_hours(now: datetime, hour_start: List[int], hour_end: List[int]) -> bool:
     if len(hour_start) < 3 or len(hour_end) < 3:
         return False
-    
+
     hour_start_corrected = now.replace(hour=hour_start[0], minute=hour_start[1], second=hour_start[2])
     hour_end_corrected = now.replace(hour=hour_end[0], minute=hour_end[1], second=hour_end[2])
 
     #account for a period that crossed midnight, ex. start=22, end=4
     if hour_start_corrected.hour > hour_end_corrected.hour:
-        hour_end_corrected += timedelta(days=1)  
+        if (now.hour >= hour_start_corrected.hour):
+            #this means same day  
+            hour_end_corrected += timedelta(days=1)  
+        else:
+            #this means we're the morning of, and that's where our now snapshot was taken, so we instead decrement the start date
+            hour_start_corrected -= timedelta(days=1)
 
     if now >= hour_start_corrected and now <= hour_end_corrected:
         return True
